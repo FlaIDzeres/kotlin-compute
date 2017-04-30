@@ -13,29 +13,31 @@ fun main(args: Array<String>) {
 
     if (!dir.exists()) dir.mkdirs()
 
-    compute {
-        val v0 = 0
+    run()
+}
 
-        to("nodeId1")
+fun run() = compute {
+    val v0 = 0
 
-        val v1 = v0 + 1
+    to("nodeId1")
 
-        println("Compute on nodeId1 " + v1)
+    val v1 = v0 + 1
 
-        to("nodeId2")
+    println("Compute on nodeId1 " + v1)
 
-        val v2 = v1 + 2
+    to("nodeId2")
 
-        println("Compute on nodeId2 " + v2)
+    val v2 = v1 + 2
 
-        to("nodeId3")
+    println("Compute on nodeId2 " + v2)
 
-        val v3 = v2 + 3
+    to("nodeId3")
 
-        println("Compute on nodeId3 " + v3)
+    val v3 = v2 + 3
 
-        println("Compute result:" + v3)
-    }
+    println("Compute on nodeId3 " + v3)
+
+    println("Compute result:" + v3)
 }
 
 fun compute(block: suspend () -> Unit) {
