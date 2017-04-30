@@ -1,5 +1,8 @@
 import java.io.*
-import kotlin.coroutines.experimental.*
+import kotlin.coroutines.experimental.Continuation
+import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.experimental.startCoroutine
+import kotlin.coroutines.experimental.suspendCoroutine
 
 /**
  * Created by flaidzeres on 30.04.17.
@@ -41,9 +44,16 @@ fun run() = compute {
 }
 
 fun compute(block: suspend () -> Unit) {
-    block.startCoroutine(object : Continuation<Unit> {
+    block.startCoroutine(object : Continuation<Unit>, Serializable {
         override val context: CoroutineContext
-            get() = EmptyCoroutineContext
+            get() = object : CoroutineContext, Serializable {
+                override fun <E : CoroutineContext.Element> get(key: CoroutineContext.Key<E>): E? = null
+                override fun <R> fold(initial: R, operation: (R, CoroutineContext.Element) -> R): R = initial
+                override fun plus(context: CoroutineContext): CoroutineContext = context
+                override fun minusKey(key: CoroutineContext.Key<*>): CoroutineContext = this
+                override fun hashCode(): Int = 0
+                override fun toString(): String = "EmptyCoroutineContext"
+            }
 
         override fun resume(value: Unit) {}
 
@@ -54,11 +64,17 @@ fun compute(block: suspend () -> Unit) {
 suspend fun to(nodeId: String) {
     suspendCoroutine<Unit> { con ->
         try {
+            val field = con.javaClass.getDeclaredField("delegate")
+
+            field.isAccessible = true
+
+            val con1 = field.get(con)
+
             println("Serialize callback")
 
             val out = ObjectOutputStream(FileOutputStream(kotlinSerPath + "callBack" + nodeId))
 
-            out.writeObject(con)
+            out.writeObject(con1)
 
             // Send to another node
             println("Send compute to " + nodeId)
