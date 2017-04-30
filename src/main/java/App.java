@@ -77,7 +77,7 @@ public class App {
                 // Received callback on {nodeId}
                 System.out.println("DeSerialize callback");
 
-                ObjectInput in = new ObjectInputStream(new FileInputStream("files/java/callBack" + nodeId));
+                ObjectInput in = new ObjectInputStream(new FileInputStream(javaSerPath + "callBack" + nodeId));
 
                 App.SerializeRunnable run0 = (SerializeRunnable)in.readObject();
 
