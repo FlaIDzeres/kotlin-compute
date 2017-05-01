@@ -1,8 +1,9 @@
 import java.io.*
 import kotlin.coroutines.experimental.Continuation
 import kotlin.coroutines.experimental.CoroutineContext
+import kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED
+import kotlin.coroutines.experimental.intrinsics.suspendCoroutineOrReturn
 import kotlin.coroutines.experimental.startCoroutine
-import kotlin.coroutines.experimental.suspendCoroutine
 
 /**
  * Created by flaidzeres on 30.04.17.
@@ -66,19 +67,13 @@ fun compute(block: suspend () -> Unit) {
 }
 
 suspend fun to(nodeId: String) {
-    suspendCoroutine<Unit> { con ->
+    suspendCoroutineOrReturn<Unit> { con ->
         try {
-            val field = con.javaClass.getDeclaredField("delegate")
-
-            field.isAccessible = true
-
-            val con1 = field.get(con)
-
             println("Serialize callback")
 
             val out = ObjectOutputStream(FileOutputStream(kotlinSerPath + "callBack" + nodeId))
 
-            out.writeObject(con1)
+            out.writeObject(con)
 
             out.close()
 
@@ -98,5 +93,7 @@ suspend fun to(nodeId: String) {
         } catch (e: Throwable) {
             println("Got exception:" + e)
         }
+
+        COROUTINE_SUSPENDED
     }
 }
