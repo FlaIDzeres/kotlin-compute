@@ -55,9 +55,13 @@ fun compute(block: suspend () -> Unit) {
                 override fun toString(): String = "EmptyCoroutineContext"
             }
 
-        override fun resume(value: Unit) {}
+        override fun resume(value: Unit) {
+            println("Complete coroutine")
+        }
 
-        override fun resumeWithException(exception: Throwable) {}
+        override fun resumeWithException(exception: Throwable) {
+            println("Complete coroutine with " + exception)
+        }
     })
 }
 
@@ -76,6 +80,8 @@ suspend fun to(nodeId: String) {
 
             out.writeObject(con1)
 
+            out.close()
+
             // Send to another node
             println("Send compute to " + nodeId)
 
@@ -85,6 +91,8 @@ suspend fun to(nodeId: String) {
             val `in` = ObjectInputStream(FileInputStream(kotlinSerPath + "callBack" + nodeId))
 
             val run0 = `in`.readObject() as Continuation<Unit>
+
+            `in`.close()
 
             run0.resume(Unit)
         } catch (e: Throwable) {
