@@ -20,27 +20,27 @@ fun main(args: Array<String>) {
 }
 
 fun run() = compute {
-    val v0 = 0
+    val val0 = 0
 
     to("nodeId1")
 
-    val v1 = v0 + 1
+    val val1 = val0 + 1
 
-    println("Compute on nodeId1 " + v1)
+    println("Compute on nodeId1 val1=$val1")
 
     to("nodeId2")
 
-    val v2 = v1 + 2
+    val val2 = val1 + 2
 
-    println("Compute on nodeId2 " + v2)
+    println("Compute on nodeId2 val1=$val1 val2=$val2")
 
     to("nodeId3")
 
-    val v3 = v2 + 3
+    val val3 = val2 + 3
 
-    println("Compute on nodeId3 " + v3)
+    println("Compute on nodeId3 val1=$val1 val2=$val2 val3=$val3")
 
-    println("Compute result:" + v3)
+    println("Compute result:" + val3)
 }
 
 fun compute(block: suspend () -> Unit) {
